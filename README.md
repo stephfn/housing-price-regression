@@ -63,7 +63,6 @@ The goal of this project was to evaluate how dimensionality reduction and featur
 - NumPy
 - scikit-learn
 - matplotlib
-- seaborn
 
 ---
 
