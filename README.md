@@ -70,10 +70,10 @@ The goal of this project was to evaluate how dimensionality reduction and featur
 
 ## Key Findings
 
-- PCA successfully reduced dimensionality while retaining 90% of dataset variance.
-- Variance threshold feature selection slightly improved regression performance by removing low-variance features.
-- Dimensionality reduction does not always improve predictive performance despite reducing complexity.
-- Feature engineering and preprocessing decisions significantly influence regression model effectiveness.
+- **Data Leakage Resolution:** Identified and corrected a critical data leakage anomaly during the preprocessing phase. Resolving this issue established a statistically sound baseline, significantly altering subsequent model evaluation.
+- **PCA Optimization:** Following the leakage correction, Principal Component Analysis (PCA) successfully reduced dimensionality while retaining 90% of the dataset's true variance, demonstrating that proper feature isolation is vital for effective decomposition.
+- **Dimensionality vs. Performance:** Verified that while dimensionality reduction simplifies model complexity and reduces training time, its impact on predictive performance is heavily contingent upon robust preprocessing and the elimination of target leakage.
+- **Feature Engineering Impact:** Feature engineering and preprocessing decisions—specifically variance thresholding and scaling—proved to be the most influential factors in determining final regression model effectiveness.
 
 ---
 
