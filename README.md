@@ -70,10 +70,10 @@ The goal of this project was to evaluate how dimensionality reduction and featur
 
 ## Key Findings
 
-- **Data Leakage Resolution:** Identified and corrected a critical data leakage anomaly during the preprocessing phase. Resolving this issue established a statistically sound baseline, significantly altering subsequent model evaluation.
-- **PCA Optimization:** Following the leakage correction, Principal Component Analysis (PCA) successfully reduced dimensionality while retaining 90% of the dataset's true variance, demonstrating that proper feature isolation is vital for effective decomposition.
-- **Dimensionality vs. Performance:** Verified that while dimensionality reduction simplifies model complexity and reduces training time, its impact on predictive performance is heavily contingent upon robust preprocessing and the elimination of target leakage.
-- **Feature Engineering Impact:** Feature engineering and preprocessing decisions—specifically variance thresholding and scaling—proved to be the most influential factors in determining final regression model effectiveness.
+- **Preprocessing Optimization (Feature Scaling):** Identified that the choice of feature scaling directly dictates PCA performance. Replacing `MinMaxScaler` with `StandardScaler` ensured features were evaluated on a standardized variance scale, correcting a mathematical bottleneck that previously limited the model.
+- **PCA Optimization:** Following proper scaling, Principal Component Analysis (PCA) successfully compressed model complexity while capturing 90% of the true dataset variance, proving that correct feature standardization is vital for accurate decomposition.
+- **Dimensionality vs. Performance:** Verified that while dimensionality reduction effectively simplifies model architecture and cuts down training overhead, its impact on predictive performance is heavily contingent upon these robust, foundational preprocessing choices.
+- **Feature Engineering Impact:** Preprocessing decisions—specifically the interplay between variance thresholding and appropriate scaling methodologies—proved to be the most influential factors in determining final regression model effectiveness.
 
 ---
 
