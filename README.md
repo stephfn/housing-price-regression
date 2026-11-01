@@ -104,3 +104,33 @@ The analysis used ordinary linear regression without regularization. Additional 
 5. Restart the kernel and run all cells.
 
 The Kaggle dataset is not included in this repository.
+
+
+---
+
+## Tools and Libraries
+
+- Python
+- pandas
+- NumPy
+- scikit-learn
+- matplotlib
+
+---
+
+## Repository Contents
+
+```text
+housing-price-regression/
+│
+├── README.md
+├── housing_price_pca_regression.ipynb
+└── .gitignore
+```
+
+---
+
+## Author
+
+Stephanie Nord  
+Master’s Student in Data Science
