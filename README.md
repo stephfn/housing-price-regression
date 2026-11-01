@@ -1,3 +1,14 @@
+
+# Housing Price Regression with PCA and Feature Selection
+
+## Overview
+
+This project explores dimensionality reduction and feature selection techniques in machine learning using the House Prices dataset. Linear regression models were developed and evaluated before and after applying Principal Component Analysis (PCA) and variance threshold feature selection methods.
+
+The project compares how preprocessing and feature engineering techniques influence regression model performance, interpretability, and dataset dimensionality.
+
+---
+
 ## Revisiting the Original Analysis
 
 This project was originally developed while learning dimensionality reduction and feature selection with scikit-learn. Revisiting the notebook revealed several methodological issues, particularly the order of preprocessing operations and the interpretation of feature scaling before PCA.
