@@ -1,104 +1,95 @@
-# Housing Price Regression with PCA and Feature Selection
+## Revisiting the Original Analysis
 
-## Overview
+This project was originally developed while learning dimensionality reduction and feature selection with scikit-learn. Revisiting the notebook revealed several methodological issues, particularly the order of preprocessing operations and the interpretation of feature scaling before PCA.
 
-This project explores dimensionality reduction and feature selection techniques in machine learning using the House Prices dataset. Linear regression models were developed and evaluated before and after applying Principal Component Analysis (PCA) and variance threshold feature selection methods.
+The revised analysis separates training and testing data before fitting preprocessing transformations. Missing-value imputation, categorical encoding, scaling, and dimensionality reduction are fitted using training data, then applied to the held-out test data.
 
-The project compares how preprocessing and feature engineering techniques influence regression model performance, interpretability, and dataset dimensionality.
+The project also compares PCA with and without standardization to examine how feature scale influences the resulting components and predictive performance.
 
----
+### Understanding Feature Scaling
 
-## 🔄 Refactoring & Major Breakthrough
+MinMaxScaler transforms each feature according to its observed minimum and maximum, while StandardScaler centers each feature and scales it to unit variance.
 
-While reviewing this pipeline, a deep dive into the mathematical assumptions of preprocessing data transformations revealed a critical methodology flaw in the initial version: **the use of `MinMaxScaler` immediately prior to Principal Component Analysis (PCA).**
+Neither transformation is universally preferable. However, StandardScaler provides a useful basis for PCA when predictors have different numerical scales and the goal is to give each feature comparable influence on the variance-based decomposition.
 
-### The Discovery: Bounded vs. Variance-Preserving Scaling
-* **The Problem:** PCA operates entirely on identifying and maximizing geometric variance across orthogonal axes. Because this dataset features high-dimensional housing data (229 predictors) with extreme outliers, `MinMaxScaler` compressed the feature spaces into a tight boundary (0 to 1). This squashed the data's natural variance, forcing PCA to calculate components based on a distorted feature space.
-* **The Fix:** The pipeline was refactored to utilize **`StandardScaler`**, centering the features around a mean of 0 and a standard deviation of 1. This preserved the true relative variance structure across all 229 features while safely eliminating magnitude imbalances.
+The revised notebook retains an unscaled PCA experiment to illustrate the consequences of applying PCA directly to predictors measured on different scales.
 
-### 📈 Performance Impact
-Swapping to a variance-preserving preprocessing framework completely transformed the downstream Linear Regression model's predictive capabilities:
+## Model Performance
 
-| Metric | Baseline Model (229 Features) | Refactored PCA Model (127 Components) | Improvement |
-| :--- | :--- | :--- | :--- |
-| **Dimensionality** | 229 Features | 127 Principal Components | **~45% reduction in complexity** |
-| **R² Score** | 0.648 | **0.841** | **+19.3% variance explained** |
-| **RMSE** | 51,973.14 | **34,938.50** | **-$17,034.64 in average error** |
+All four regression models were evaluated using the same 80/20 train/test split of the Ames housing dataset.
 
-This adjustment effectively eliminated noise and multi-collinearity from the high-dimensional feature space, proving that a model's performance is heavily contingent upon aligning preprocessing transformations with an algorithm's core mathematical assumptions.
+| Model | Predictors or Components | R² | RMSE |
+|---|---:|---:|---:|
+| Baseline Linear Regression | 227 | 0.8786 | $30,509.66 |
+| StandardScaler + PCA | 127 | 0.8409 | $34,938.33 |
+| MinMaxScaler + VarianceThreshold | 40 | 0.6481 | $51,952.01 |
+| Unscaled PCA | 1 | 0.0635 | $84,754.58 |
 
----
+The baseline regression model achieved the strongest predictive performance. Standardized PCA reduced dimensionality by approximately 44% but produced a moderately higher prediction error.
+
+Unscaled PCA retained only one principal component when configured to preserve 90% of predictor variance. This model performed substantially worse than standardized PCA, illustrating how differences in numerical scale can influence PCA.
+
+MinMaxScaler followed by VarianceThreshold reduced the number of predictors by approximately 82%, but this reduction also decreased predictive performance.
+
+These results demonstrate that reducing dimensionality does not necessarily improve predictive accuracy.
 
 ## Techniques Used
 
 - Linear Regression
 - Principal Component Analysis (PCA)
-- Variance Threshold Feature Selection
-- Dummy Variable Encoding
-- Missing Value Imputation
-- MinMax Scaling
+- StandardScaler and MinMaxScaler
+- VarianceThreshold Feature Selection
+- OneHotEncoder for Categorical Features
+- SimpleImputer for Missing Values
+- ColumnTransformer and scikit-learn Pipelines
 - Train/Test Split
-- R² and RMSE Evaluation Metrics
-
----
+- R² and Root Mean Squared Error (RMSE)
 
 ## Dataset
 
-The House Prices dataset was used to predict home sale prices based on multiple housing characteristics and engineered numerical features.
+The project uses the Ames housing dataset from Kaggle's House Prices: Advanced Regression Techniques competition.
 
----
+The training dataset contains 1,460 residential property observations and 81 original columns, including the target variable, SalePrice.
+
+After separating predictors and the target, the revised analysis uses an 80/20 train/test split. The preprocessing workflow produces 227 encoded predictors for modeling.
+
+Dataset source: https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data
 
 ## Objective
 
-The goal of this project was to evaluate how dimensionality reduction and feature selection impact machine learning model performance while reducing dataset complexity.
-
----
+The goal of this project was to evaluate how dimensionality reduction and feature selection influence regression performance while reducing the number of predictors used by the model.
 
 ## Project Workflow
 
-1. Load and inspect housing dataset
-2. Clean and preprocess missing values
-3. Encode categorical variables using dummy variables
-4. Split dataset into training and testing sets
-5. Train baseline linear regression model
-6. Apply PCA while retaining 90% variance
-7. Apply variance threshold feature selection
-8. Compare model performance using R² and RMSE
-9. Interpret the impact of dimensionality reduction techniques
-
----
+1. Load and inspect the Ames housing training dataset.
+2. Separate SalePrice from the predictors and create an 80/20 train/test split.
+3. Identify columns exceeding 40% missing values using training data only.
+4. Fit numerical imputation and categorical encoding on the training predictors.
+5. Apply the learned preprocessing transformations to the held-out test predictors.
+6. Train and evaluate baseline linear regression.
+7. Compare PCA with and without StandardScaler, retaining 90% of predictor variance.
+8. Apply MinMaxScaler and VarianceThreshold with a threshold of 0.10.
+9. Compare all four models using R² and RMSE.
 
 ## Key Findings
 
-- **Preprocessing Optimization (Feature Scaling):** Identified that the choice of feature scaling directly dictates PCA performance. Replacing `MinMaxScaler` with `StandardScaler` ensured features were evaluated on a standardized variance scale, correcting a mathematical bottleneck that previously limited the model.
-- **PCA Optimization:** Following proper scaling, Principal Component Analysis (PCA) successfully compressed model complexity while capturing 90% of the true dataset variance, proving that correct feature standardization is vital for accurate decomposition.
-- **Dimensionality vs. Performance:** Verified that while dimensionality reduction effectively simplifies model architecture and cuts down training overhead, its impact on predictive performance is heavily contingent upon these robust, foundational preprocessing choices.
-- **Feature Engineering Impact:** Preprocessing decisions—specifically the interplay between variance thresholding and appropriate scaling methodologies—proved to be the most influential factors in determining final regression model effectiveness.
+- **Baseline performance:** Linear regression using all 227 preprocessed predictors achieved the highest R² and lowest RMSE of the four approaches.
+- **Feature scaling and PCA:** Standardized PCA retained 127 components, compared with one component for unscaled PCA, demonstrating the importance of feature scale in variance-based dimensionality reduction.
+- **Feature selection:** VarianceThreshold reduced the number of predictors to 40 but did not improve predictive accuracy over the baseline.
+- **Interpretation:** Preserving predictor variance does not necessarily preserve information relevant to predicting the target variable.
 
----
+## Limitations
 
-## Tools and Libraries
+The models were evaluated using a single train/test split rather than cross-validation. The PCA variance-retention setting, missing-value threshold, and variance-selection threshold were exploratory choices rather than optimized hyperparameters.
 
-- Python
-- pandas
-- NumPy
-- scikit-learn
-- matplotlib
+The analysis used ordinary linear regression without regularization. Additional evaluation could include cross-validation, residual analysis, and regularized regression models.
 
----
+## Reproducing the Analysis
 
-## Repository Contents
+1. Clone this repository.
+2. Download `train.csv` from the Kaggle competition linked above and place it in the repository's root directory.
+3. Install the required Python libraries: pandas, NumPy, scikit-learn, and any plotting libraries imported by the notebook.
+4. Open `housing_price_pca_regression.ipynb` in JupyterLab or another compatible notebook environment.
+5. Restart the kernel and run all cells.
 
-```text
-housing-price-regression/
-│
-├── README.md
-└── housing_price_pca_regression.ipynb
-```
-
----
-
-## Author
-
-Stephanie Nord  
-Master’s Student in Data Science
+The Kaggle dataset is not included in this repository.
